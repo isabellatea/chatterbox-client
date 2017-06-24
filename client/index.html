@@ -5,7 +5,6 @@
     <title>chatterbox</title>
     <link rel="stylesheet" href="styles/styles.css">
 
-    <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/underscore/underscore.js"></script>
     <script>
@@ -19,16 +18,14 @@
         window.location.search = newSearch;
       }
     </script>
-    <!-- your scripts -->
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
       Room:
-      <select id ="specificRoom">
+      <select id ="roomSelect">
         <option value ="lobby">lobby</option>
       </select>
       <button type="button">Select</button>
@@ -40,8 +37,8 @@
         <input id='submit' type='submit' value='Submit'>
       </form>
       <button type="button">Refresh Me!</button>
-
     </div>
+
     <div id="chats"></div>
   </body>
 </html>

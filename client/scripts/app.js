@@ -9,15 +9,14 @@ var app = {
 };
 
 app.init = function() {
-  app.getMessages();
-  setInterval(app.getMessages, 2000000);
+  app.fetch();
+  setInterval(app.fetch, 2000000);
 };
 
-app.sendMessage = function(message) {
+app.send = function(message) {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
-    url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages',
-    type: 'POST',
+    url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages', type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
@@ -29,7 +28,7 @@ app.sendMessage = function(message) {
   });
 };
 
-app.getMessages = function() {
+app.fetch = function() {
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages',
@@ -39,23 +38,24 @@ app.getMessages = function() {
     success: function (data) {
       console.log('chatterbox: Message retrieved');
       console.log(data);
-      $('#chats').empty();
+      app.clearMessages();
       _.each(data.results, function(value) {
-        var specificRoom = $('#specificRoom option:selected').val();
-        if (value.roomname === specificRoom) {
-          app.addMessage(value);
+        var roomSelect = $('#roomSelect option:selected').val();
+        if (value.roomname === roomSelect) {
+          app.renderMessage(value);
         }
-        app.addRoom(value.roomname);
+        app.renderRoom(value.roomname);
       });
+      app.myFriends();
     },
     error: function (data) {
       console.error('chatterbox: Failed to retrieve message', data);
     }
   });
-  app.myFriends();
+
 };
 
-app.addMessage = function(message) {
+app.renderMessage = function(message) {
   $('#chats').append(`
     <div class='chats'>
       <span class='username' data-username=${_.escape(message.username)}>
@@ -72,15 +72,19 @@ app.addMessage = function(message) {
   });
 };
 
+app.clearMessages = function() {
+  $('#chats').empty();
+};
+
 app.addFriend = function(event) {
   var friend = $(event).text();
   app.friendsList[friend] = true;
 };
 
-app.addRoom = function(room) {
+app.renderRoom = function(room) {
   if (app.roomsList[room] === undefined) {
     app.roomsList[room] = true;
-    $('#specificRoom').append("<option value ='" + room + "'>" + room + "</option>");
+    $('#roomSelect').append("<option value ='" + room + "'>" + room + "</option>");
   }
 };
 // app.submitHandler = function () {
@@ -93,7 +97,7 @@ app.addRoom = function(room) {
 //     roomname: '4chan'
 //   };
 
-//   app.sendMessage(messageObj);
+//   app.send(messageObj);
 // };
 
 app.myFriends = function() {
@@ -108,7 +112,7 @@ $(document).ready(function() {
   $('#submit').click(function(event) {
     var message = $('#messageToBeSent').val();
     var username = window.location.search.slice(10);
-    var room = $('#specificRoom').val();
+    var room = $('#roomSelect').val();
     var messageObj = {};
     messageObj.username = username;
     messageObj.text = message;
@@ -118,16 +122,16 @@ $(document).ready(function() {
     var test = JSON.stringify(messageObj);
     console.log(test);
 
-    app.sendMessage(messageObj);
+    app.send(messageObj);
   });
 
   $('button').click(function() {
-    app.getMessages();
+    app.fetch();
   });
 
   $('#newRoom').click(function() {
     var roomName = prompt('What should the room be called?');
-    app.addRoom(roomName);
+    app.renderRoom(roomName);
   });
 });
 
