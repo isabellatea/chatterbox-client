@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>chatterbox</title>
     <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/underscore/underscore.js"></script>
@@ -20,25 +21,38 @@
     </script>
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
+
   </head>
   <body>
-    <div id="main">
-      <h1>chatterbox</h1>
-      Room:
-      <select id ="roomSelect">
-        <option value ="lobby">lobby</option>
-      </select>
-      <button type="button">Select</button>
-      <button type="button" id="newRoom">Make New Room</button>
 
-      <form>
-        Message:
-        <input id='messageToBeSent' type='text' placeholder='write message here'>
-        <input id='submit' type='submit' value='Submit'>
-      </form>
-      <button type="button">Refresh Me!</button>
+    <div id="container">
+      <div class="row">
+        <div class="col-sm-4" id="leftColumn">
+          <h1>Chatterbox</h1>
+          <h4>Select a room to begin!</h4>
+          Room:
+          <select id ="roomSelect">
+            <option>Pick A Room Here</option>
+          </select>
+          <button type="button" class="btn-primary">Select</button>
+          <button type="button" id="newRoom" class="btn-primary">Make New Room</button>
+          <hr>
+
+          <form>
+            Post:
+            <input id='messageToBeSent' type='text' placeholder='write message here'>
+            <input id='submit' type='submit' value='Send' class="btn-primary">
+          </form>
+          <hr>
+          <button type="button" class="btn-success">Refresh Room</button>
+
+        </div>
+        <div class="col-sm-8" id="rightColumn">
+          <div id="chats"></div>
+
+        </div>
     </div>
 
-    <div id="chats"></div>
+
   </body>
 </html>

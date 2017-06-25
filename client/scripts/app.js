@@ -3,7 +3,6 @@
 //these all need to be their own functions so that can be called 'onclick'
 
 var app = {
-  server: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages',
   friendsList: {},
   roomsList: {}
 };
@@ -15,8 +14,8 @@ app.init = function() {
 
 app.send = function(message) {
   $.ajax({
-    // This is the url you should use to communicate with the parse API server.
-    url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages', type: 'POST',
+    url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages',
+    type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
@@ -26,25 +25,24 @@ app.send = function(message) {
       console.error('chatterbox: Failed to send message', data);
     }
   });
+  app.fetch();
 };
 
 app.fetch = function() {
   $.ajax({
-    // This is the url you should use to communicate with the parse API server.
     url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages',
     type: 'GET',
     data: {order: '-createdAt'},
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message retrieved');
-      console.log(data);
       app.clearMessages();
-      _.each(data.results, function(value) {
+      _.each(data.results, function(message) {
         var roomSelect = $('#roomSelect option:selected').val();
-        if (value.roomname === roomSelect) {
-          app.renderMessage(value);
+        if (message.roomname === roomSelect) {
+          app.renderMessage(message);
         }
-        app.renderRoom(value.roomname);
+        app.renderRoom(message.roomname);
       });
       app.myFriends();
     },
@@ -52,7 +50,10 @@ app.fetch = function() {
       console.error('chatterbox: Failed to retrieve message', data);
     }
   });
+};
 
+app.clearMessages = function() {
+  $('#chats').empty();
 };
 
 app.renderMessage = function(message) {
@@ -72,10 +73,6 @@ app.renderMessage = function(message) {
   });
 };
 
-app.clearMessages = function() {
-  $('#chats').empty();
-};
-
 app.addFriend = function(event) {
   var friend = $(event).text();
   app.friendsList[friend] = true;
@@ -87,18 +84,6 @@ app.renderRoom = function(room) {
     $('#roomSelect').append("<option value ='" + room + "'>" + room + "</option>");
   }
 };
-// app.submitHandler = function () {
-//   var message = $('#messageToBeSent').val();
-//   console.log(message);
-
-//   var messageObj = {
-//     username: 'shawndrost',
-//     text: message,
-//     roomname: '4chan'
-//   };
-
-//   app.send(messageObj);
-// };
 
 app.myFriends = function() {
   for (var key in app.friendsList) {
@@ -110,6 +95,7 @@ $(document).ready(function() {
   app.init();
 
   $('#submit').click(function(event) {
+    event.preventDefault();
     var message = $('#messageToBeSent').val();
     var username = window.location.search.slice(10);
     var room = $('#roomSelect').val();
@@ -117,10 +103,6 @@ $(document).ready(function() {
     messageObj.username = username;
     messageObj.text = message;
     messageObj.roomname = room;
-
-    console.log(messageObj);
-    var test = JSON.stringify(messageObj);
-    console.log(test);
 
     app.send(messageObj);
   });
@@ -134,8 +116,4 @@ $(document).ready(function() {
     app.renderRoom(roomName);
   });
 });
-
-
-
-
 
